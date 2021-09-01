@@ -8,7 +8,8 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      buffer: null
+      buffer: null,
+      imageUploaded: null
     }
   }
   captureFile = (event) => {
@@ -17,6 +18,7 @@ class App extends Component {
     const reader = new window.FileReader()
     reader.readAsArrayBuffer(file)
     reader.onloadend = () => {
+      console.log(reader.result)
       this.setState({
         buffer: Buffer(reader.result)
       })
@@ -33,6 +35,9 @@ class App extends Component {
     })
     let result = await ipfs.add(this.state.buffer)
     console.log(result)
+    this.setState({
+      imageUploaded: `https://cloudflare-ipfs.com/ipfs/${result.path}`
+    })
   }
   render() {
     return (
@@ -44,7 +49,7 @@ class App extends Component {
           <div className="row">
             <main role="main" className="col-lg-12 d-flex text-center">
               <div className="content mr-auto ml-auto">
-                <img src={logo} className='App-logo' alt='logo' />
+                <img src={(this.state.imageUploaded) ? this.state.imageUploaded : logo} className='App-logo' alt='logo' />
                 <h2>Change meme</h2>
                 <form onSubmit={this.onSubmit}>
                   <input type='file' onChange={this.captureFile} />
